@@ -143,12 +143,7 @@ public class Main extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                redimensionarBtn.setDisable(true);
-                btnOrigen.setDisable(true);
-                btnDestino.setDisable(true);
-                anchoTextField.setDisable(true);
-                altoTextField.setDisable(true);
-                calidadTextField.setDisable(true);
+                disableUI(true);
 
                 progressText.setVisible(true);
                 progressText.setText("Comenzando proceso de redimensión...");
@@ -177,10 +172,12 @@ public class Main extends Application {
         if (origenFolder == null || !origenFolder.isDirectory() || origenFolder.listFiles() == null || origenFolder.listFiles().length <= 0) {
             progressText.setText("La carpeta de origen no es válida");
             progressBar.setVisible(false);
+            disableUI(false);
             return;
         } else if (destinoFolder == null || !destinoFolder.exists() || !destinoFolder.isDirectory()) {
             progressText.setText("La carpeta de destino no es válida");
             progressBar.setVisible(false);
+            disableUI(false);
             return;
         }
 
@@ -213,27 +210,26 @@ public class Main extends Application {
                     Platform.runLater(() -> {
                         progressText.setText(String.format("Proceso de redimensión completo: %d imágenes procesadas.", images.size()));
                         progressBar.setProgress(1);
-                        redimensionarBtn.setDisable(false);
-                        btnOrigen.setDisable(false);
-                        btnDestino.setDisable(false);
-                        anchoTextField.setDisable(false);
-                        altoTextField.setDisable(false);
-                        calidadTextField.setDisable(false);
+                        disableUI(false);
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
                     Platform.runLater(() -> {
                         progressText.setText(String.format("El proceso ha fallado: %s", e.getMessage()));
-                        redimensionarBtn.setDisable(false);
-                        btnOrigen.setDisable(false);
-                        btnDestino.setDisable(false);
-                        anchoTextField.setDisable(false);
-                        altoTextField.setDisable(false);
-                        calidadTextField.setDisable(false);
+                        disableUI(false);
                     });
                 }
             }
         }.start();
+    }
+
+    private void disableUI(boolean value) {
+        redimensionarBtn.setDisable(value);
+        btnOrigen.setDisable(value);
+        btnDestino.setDisable(value);
+        anchoTextField.setDisable(value);
+        altoTextField.setDisable(value);
+        calidadTextField.setDisable(value);
     }
 
     private void prepareImages(File folder, List<File> images) {
